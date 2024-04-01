@@ -4,12 +4,10 @@ from django.http import QueryDict
 import json
 from urllib.parse import unquote
 import urllib
-from .models import recipe,gen_ins
+from .models import recipe,gen_ins,FoodItem
 # Create your views here.
 def home(request):
     return render(request,'accounts/index.html')
-def ourword(request):
-    return render(request,'accounts/ourword.html')
 def about(request):
     return render(request,'accounts/about2.html')
 def features(request):
@@ -73,3 +71,58 @@ def yoga3(request):
     return render(request,'accounts/yoga3.html')
 def yoga4(request):
     return render(request,'accounts/yoga4.html')
+def bmi(request):
+    return render(request,'accounts/bmi.html')
+def bmi_predicted(request):
+    if request.method == 'POST':
+        # Retrieve form data
+        height = int(request.POST['height'])
+        weight = int(request.POST['weight'])
+        rice_quantity = int(request.POST['rice'])
+        roti_quantity = int(request.POST['roti'])
+        dal_quantity = int(request.POST['dal'])
+        eggs_quantity = int(request.POST['eggs'])
+        sabzi_quantity = int(request.POST['sabzi'])
+        fruits_quantity = int(request.POST['fruits'])
+        buttermilk_quantity = int(request.POST['buttermilk'])
+        juice_quantity = int(request.POST['juice'])
+        workout=int(request.POST['workout'])
+        # Calculate total nutrients and calories
+        total_proteins = rice_quantity * 2.6 + roti_quantity * 3 + dal_quantity * 8.9 + eggs_quantity * 6 + sabzi_quantity * 2 + fruits_quantity * 0.6 + buttermilk_quantity * 2 + juice_quantity * 0.5
+        total_fats = rice_quantity * 0.3 + roti_quantity * 1 + dal_quantity * 0.4 + eggs_quantity * 5.3 + sabzi_quantity * 4 + fruits_quantity * 0.5 + buttermilk_quantity * 1.5 + juice_quantity * 0.2
+        total_carbohydrates = rice_quantity * 28 + roti_quantity * 15 + dal_quantity * 20 + eggs_quantity * 1.1 + sabzi_quantity * 8 + fruits_quantity * 15 + buttermilk_quantity * 10 + juice_quantity * 25
+        total_vitamins = rice_quantity * 0.1 + roti_quantity * 0.2 + dal_quantity * 0.4 + eggs_quantity * 0.1 + sabzi_quantity * 0.2 + fruits_quantity * 0.1 + buttermilk_quantity * 0.3 + juice_quantity * 0.2
+        total_minerals = rice_quantity * 0.5 + roti_quantity * 0.3 + dal_quantity * 0.2 + eggs_quantity * 0.1 + sabzi_quantity * 1 + fruits_quantity * 0.3 + buttermilk_quantity * 0.7 + juice_quantity * 0.5
+        total_calories = rice_quantity * 130 + roti_quantity * 80 + dal_quantity * 104 + eggs_quantity * 78 + sabzi_quantity * 120 + fruits_quantity * 60 + buttermilk_quantity * 42 + juice_quantity * 100
+
+        # Calculate BMI
+        bmi = int(weight / ((height / 100) ** 2))
+        protein_percentage = (total_proteins / 1000) * 100
+        carbohydrate_percentage = (total_carbohydrates / 5000) * 100
+        fat_percentage = (total_fats / 2000) * 100 
+
+        total_nutrients = total_proteins + total_fats + total_carbohydrates + total_vitamins + total_minerals
+        protein_percentage2 = (total_proteins / total_nutrients) * 100
+        carbohydrate_percentage2 = (total_carbohydrates / total_nutrients) * 100
+        fat_percentage2 = (total_fats / total_nutrients) * 100
+        vitamin_percentage2 = (total_vitamins / total_nutrients) * 100
+        mineral_percentage2 = (total_minerals / total_nutrients) * 100
+        # Render results in a new HTML page
+        return render(request, 'accounts/bmi_predicted.html', {
+            'bmi': bmi,
+            'total_proteins': total_proteins,
+            'total_fats': total_fats,
+            'total_carbohydrates': total_carbohydrates,
+            'total_vitamins': total_vitamins,
+            'total_minerals': total_minerals,
+            'total_calories': total_calories,
+            'protein_percentage': protein_percentage,
+            'carbohydrate_percentage': carbohydrate_percentage,
+            'fat_percentage': fat_percentage,
+            'protein_percentage2': protein_percentage2,
+            'carbohydrate_percentage2': carbohydrate_percentage2,
+            'fat_percentage2': fat_percentage2,
+            'vitamin_percentage2': vitamin_percentage2,
+            'mineral_percentage2': mineral_percentage2,
+            'workout':workout,
+        })

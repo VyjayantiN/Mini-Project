@@ -22,5 +22,6 @@ urlpatterns = [
     path('yoga2',views.yoga2),
     path('yoga3',views.yoga3),
     path('yoga4',views.yoga4),
-    path('ourword',views.ourword),
+    path('bmi', views.bmi),
+    path('bmi_predicted',views.bmi_predicted ,name="bmi_predicted"),
 ]
