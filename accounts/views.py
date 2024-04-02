@@ -5,6 +5,10 @@ import json
 from urllib.parse import unquote
 import urllib
 from .models import recipe,gen_ins,FoodItem
+import pandas as pd
+import joblib
+from .ml_models import train_model
+from sklearn.model_selection import train_test_split
 # Create your views here.
 def home(request):
     return render(request,'accounts/index.html')
@@ -76,6 +80,7 @@ def bmi(request):
 def bmi_predicted(request):
     if request.method == 'POST':
         # Retrieve form data
+        model = joblib.load('accounts/linear_regression_model.pkl')
         height = int(request.POST['height'])
         weight = int(request.POST['weight'])
         rice_quantity = int(request.POST['rice'])
@@ -108,6 +113,26 @@ def bmi_predicted(request):
         vitamin_percentage2 = (total_vitamins / total_nutrients) * 100
         mineral_percentage2 = (total_minerals / total_nutrients) * 100
         # Render results in a new HTML page
+
+
+        
+
+        # Load your dataset containing BMI values
+        # For example, if you have a CSV file with BMI values, you can load it using pandas
+        dataset = pd.read_csv('accounts/dataset_2nd_april.csv')
+
+        # Extract the corresponding BMI values from the dataset
+        X = dataset.drop('BMI After 30 Days' , axis=1)
+        y = dataset['BMI After 30 Days']
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        # Train the model
+        model = train_model(X_train, y_train)
+
+        # Save the trained model
+        joblib.dump(model, 'accounts/linear_regression_model.pkl')
+
+        # Make predictions
+        predicted_bmi = model.predict([[bmi,total_calories,workout]])
         return render(request, 'accounts/bmi_predicted.html', {
             'bmi': bmi,
             'total_proteins': total_proteins,
@@ -125,4 +150,5 @@ def bmi_predicted(request):
             'vitamin_percentage2': vitamin_percentage2,
             'mineral_percentage2': mineral_percentage2,
             'workout':workout,
+            'predicted_bmi': predicted_bmi[0],
         })
