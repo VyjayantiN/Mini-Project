@@ -32,15 +32,21 @@ def usermain(request):
         bmi = int(weight) / ((int(height)/100) ** 2)
         print(bmi)
         if gender.lower() == "male":
-            if bmi < 18.5:
-                category = "Underweight"
-            else:
-                category = "Healthy"
-        elif gender.lower() == "female":
-            if bmi < 18.5:
-                category = "Underweight"
-            else:
-                category = "Healthy"
+            if gender.lower() == "male":
+                if bmi < 18.5:
+                    category = "Underweight"
+                elif bmi > 25.5:
+                    category = "Overweight"
+                else:
+                    category = "Healthy"
+            elif gender.lower() == "female":
+                if bmi < 18.5:
+                    category = "Underweight"
+                elif bmi > 25.5:
+                    category = "Overweight"
+                else:
+                    category = "Healthy"
+
         else:
             category = "Unknown gender"
         object_1=recipe.objects.filter(district=district,age=age)

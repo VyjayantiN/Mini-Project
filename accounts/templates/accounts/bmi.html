@@ -13,6 +13,7 @@
             new google.translate.TranslateElement("google_element");
         }
     </script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -165,12 +166,12 @@
             <div class="row">
                 <div class="col-12 ">
                     <nav class="main-nav">
-                        <!-- ***** Logo Start ***** -->
+                        <!-- ** Logo Start ** -->
                         <a href="/" class="logo">
                             <img src="static/images/FFlogo.png" align="klassy cafe html template">
                         </a>
-                        <!-- ***** Logo End ***** -->
-                        <!-- ***** Menu Start ***** -->
+                        <!-- ** Logo End ** -->
+                        <!-- ** Menu Start ** -->
                         <ul class="nav">
                             <li class="scroll-to-section"><a href="/"class="active" >Home</a></li>
                             <li class="scroll-to-section"><a href="about">About</a></li>
@@ -285,13 +286,13 @@
                         <input type="text" id="weight" name="weight" placeholder="Enter weight">
                     </div>
                     <div class="food-item">
-                        <label for="workout">Workout : </label>
+                        <label for="workout">Workout in minutes: </label>
                         <select id="workout" name="workout">
                             <option>Select</option>
                             <option value="0">None</option>
-                            <option value="1">30 min</option>
-                            <option value="2">45 min</option>
-                            <option value="3">1 hour</option>
+                            <option value="1">30</option>
+                            <option value="2">45</option>
+                            <option value="3">60</option>
                         </select>
                     </div>
                 </div>
@@ -304,5 +305,54 @@
 
     </div>
 </section>
+<script>
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+
+    recognition.onresult = function(event) {
+        const currentField = document.activeElement;
+        if (currentField.tagName === 'INPUT' || currentField.tagName === 'SELECT') {
+            currentField.value = event.results[0][0].transcript;
+        }
+    };
+
+    function enableVoiceInput(field) {
+        field.addEventListener('focus', function() {
+            recognition.start();
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const fields = document.querySelectorAll('input[type="text"], input[type="number"], select');
+        fields.forEach(enableVoiceInput);
+    });
+</script>
+<script>
+    // Check browser support
+    if ('webkitSpeechRecognition' in window) {
+        var recognition = new webkitSpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+        
+        var voiceTarget; // to store the target input field
+
+        recognition.onresult = function(event) {
+            var transcript = event.results[0][0].transcript;
+            voiceTarget.value = transcript;
+        }
+
+        recognition.onend = function() {
+            // You can add additional logic here if needed
+        }
+    } else {
+        console.log('Web Speech API is not supported by this browser.');
+    }
+
+    function startVoiceInput(target) {
+        voiceTarget = target;
+        recognition.start();
+    }
+</script>
 </body>
 </html>
