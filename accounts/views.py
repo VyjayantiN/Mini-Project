@@ -39,7 +39,7 @@ def usermain(request):
                     category = "Overweight"
                 else:
                     category = "Healthy"
-            elif gender.lower() == "female":
+        elif gender.lower() == "female":
                 if bmi < 18.5:
                     category = "Underweight"
                 elif bmi > 25.5:
